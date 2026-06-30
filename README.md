@@ -1,75 +1,101 @@
-# mycli
+# Rust CLI Template
 
-> A fast, friendly command-line tool.
+> A production-minded Rust CLI starter with clap, config files, completions,
+> CI guardrails, release automation, and agent-ready contributor docs.
 
-<!-- Replace this README's content with your tool's docs after running init.
-     The "Using this as a template" section below is for you, the forker —
-     delete it once you've made the project your own. -->
+[![GitHub stars](https://shieldcn.dev/github/stars/christopher-kapic/rust-cli-template.svg?variant=branded&mode=dark&size=sm)](https://github.com/christopher-kapic/rust-cli-template/stargazers)
+[![GitHub forks](https://shieldcn.dev/github/forks/christopher-kapic/rust-cli-template.svg?variant=outline&mode=dark&size=sm)](https://github.com/christopher-kapic/rust-cli-template/forks)
+[![Latest release](https://shieldcn.dev/github/releases/christopher-kapic/rust-cli-template.svg?variant=outline&mode=dark&size=sm)](https://github.com/christopher-kapic/rust-cli-template/releases)
+[![Rust 1.85+](https://shieldcn.dev/badge/rust-1.85+-ef7d00.svg?variant=outline&mode=dark&size=sm&logo=rust)](Cargo.toml)
+[![License](https://shieldcn.dev/badge/license-MIT_Apache-22c55e.svg?variant=outline&mode=dark&size=sm)](#license)
 
----
+This is a template repository for building and shipping polished Rust command
+line tools. It starts green, stays small, and includes the boring release and
+quality machinery you usually have to assemble by hand.
 
-## 👉 Using this as a template? Start here
+## Start Here
 
-This repo is a **best-practices starter for building and shipping Rust CLIs**
-with an agent-first workflow. It compiles green out of the box, so you always
-start from a working state.
+Create a new repository from this template, clone it, then initialize the
+placeholder project metadata:
 
 ```sh
-# 1. Fork / "Use this template" / clone, then:
 cd mycli
 
-# 2. (Optional) Preview the rewrite without touching any files:
+# Preview the rewrite without touching files.
 cargo xtask init --name zap --owner your-github-username --dry-run
 
-# 3. Make it yours (renames `mycli`, fills in metadata):
+# Rename the crate/binary and fill in public metadata.
 cargo xtask init --name zap --owner your-github-username \
   --author "Ada Lovelace <ada@example.com>" \
   --description "Zaps things quickly."
 
-# 4. Refresh the agent docs and confirm everything's still green:
+# Refresh generated agent docs and run the same gates as CI.
 cargo xtask sync-docs
 cargo fmt --all --check
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace --all-targets --locked
 cargo test --workspace --doc --locked
 cargo xtask sync-docs --check
-
-# 5. Commit, push, and you're developing.
 ```
 
-Then set up distribution when you're ready to ship: create the Homebrew tap
-(`tap/README.md`) and cut your first release (`docs/releasing.md`).
+The template intentionally ships as `mycli`. After `cargo xtask init`, that name
+and the `OWNER` placeholder are replaced across the text files that should move
+with your new project.
 
-**What you get:**
+## What You Get
 
-- 🦀 Clean clap-based CLI scaffold (`hello`, `config`, `completions`) with a
-  lean, deliberately small dependency set.
-- 🤖 **Agent-first**: one canonical `AGENTS.md` with hard safety rules,
-  auto-generated `CLAUDE.md` / `.cursorrules` / `copilot-instructions.md`
-  (drift-checked in CI), and a `.claude/` permission allowlist.
-- ✅ **CI guardrails**: fmt, clippy (`-D warnings`), tests on Linux/macOS/Windows,
-  `cargo-deny`, MSRV check, docs-drift check, spell check, and policy greps.
-- 🚀 **Cross-platform releases** via `dist`: Windows, macOS (Intel + Apple
-  Silicon), and Linux (x86_64 + ARM64), with shell/PowerShell/Homebrew
-  installers and checksums — from one config file.
-- 📚 Drop-in guides for adding `tokio`, SQLite, or a `ratatui` TUI when you need
-  them (`docs/`), so the default stays lean.
+- A small clap-based CLI with `hello`, `config`, and `completions` commands.
+- Clean stdout/stderr boundaries, JSON output support, structured logging, and
+  stable process exit codes.
+- Cross-platform config paths and TOML config load/save helpers.
+- Focused black-box CLI tests plus room for unit tests next to pure logic.
+- CI for fmt, clippy, tests, docs drift, dependency policy, typos, MSRV, and
+  lightweight repository policy checks.
+- Cross-platform releases through `dist`, including shell, PowerShell, and
+  Homebrew installer artifacts.
+- One canonical `AGENTS.md` for humans and AI coding agents, with generated
+  mirrors checked for drift.
 
-Delete this section (and the comment above) once you've initialized.
+## Included CLI
 
----
+The default commands are deliberately simple, but complete enough to demonstrate
+the project conventions:
 
-## Install
+```sh
+mycli hello                 # Hello, world!
+mycli hello Ada             # Hello, Ada!
+mycli hello Ada --json      # {"name":"Ada","message":"Hello, Ada!"}
+mycli config path           # where the config file lives
+mycli config --json show    # {"greeting_name":"world"}
+mycli config init           # write a default config
+mycli completions zsh       # shell completions
+```
 
-> Available after your first release. The repo must be public for these to work.
+Configuration is stored in a TOML file. `mycli config path` prints the resolved
+path for the current platform. Logs go to stderr; pass `-v`/`-vv` for more,
+`--quiet` for less, or set `MYCLI_LOG`.
 
-**Shell (macOS / Linux):**
+### Exit Codes
+
+| Code | Meaning |
+| ---- | ------- |
+| 0 | success |
+| 1 | runtime error |
+| 2 | usage error |
+| 3 | not found |
+
+## Install After Release
+
+These commands are for projects created from the template. They work after your
+first public GitHub release.
+
+**Shell:**
 
 ```sh
 curl --proto '=https' --tlsv1.2 -LsSf https://github.com/OWNER/mycli/releases/latest/download/mycli-installer.sh | sh
 ```
 
-**PowerShell (Windows):**
+**PowerShell:**
 
 ```powershell
 irm https://github.com/OWNER/mycli/releases/latest/download/mycli-installer.ps1 | iex
@@ -87,30 +113,6 @@ brew install OWNER/tap/mycli
 cargo install --git https://github.com/OWNER/mycli
 ```
 
-## Usage
-
-```sh
-mycli hello                 # Hello, world!
-mycli hello Ada             # Hello, Ada!
-mycli hello Ada --json      # {"name":"Ada","message":"Hello, Ada!"}
-mycli config path           # where the config file lives
-mycli config --json show    # {"greeting_name":"world"}
-mycli config init           # write a default config
-mycli completions zsh       # shell completions
-```
-
-Configuration is a TOML file (`mycli config path` shows where). Logs go to
-stderr; pass `-v`/`-vv` for more, `--quiet` for less, or set `MYCLI_LOG`.
-
-### Exit codes
-
-| Code | Meaning |
-|------|---------|
-| 0 | success |
-| 1 | runtime error |
-| 2 | usage error (bad arguments) |
-| 3 | not found |
-
 ## Development
 
 ```sh
@@ -121,37 +123,59 @@ cargo fmt
 cargo run -- hello Ada
 ```
 
-See [`AGENTS.md`](AGENTS.md) for conventions and the agent/contributor guide,
-and [`CONTRIBUTING.md`](CONTRIBUTING.md) for the PR checklist.
+Before considering a change done, run the full local gate:
+
+```sh
+cargo fmt --all --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo test --workspace --all-targets --locked
+cargo test --workspace --doc --locked
+cargo xtask sync-docs --check
+```
+
+See [AGENTS.md](AGENTS.md) for repository conventions and
+[CONTRIBUTING.md](CONTRIBUTING.md) for the PR checklist.
 
 ## Guides
 
-The default dependency set is deliberately small. Add capabilities only when you
-need them, following these drop-in guides:
+The default dependency set is intentionally small. Add capabilities only when
+you need them, following the focused guides in `docs/`:
 
-- [Adding async (tokio)](docs/adding-tokio.md)
-- [Adding local storage (SQLite)](docs/adding-sqlite.md)
-- [Adding a TUI (ratatui)](docs/adding-ratatui.md)
-- [Error handling](docs/error-handling.md) — anyhow vs. thiserror, exit codes
-- [Releasing](docs/releasing.md) — cross-platform builds, installers, the tap
+- [Adding async with tokio](docs/adding-tokio.md)
+- [Adding local storage with SQLite](docs/adding-sqlite.md)
+- [Adding a TUI with ratatui](docs/adding-ratatui.md)
+- [Error handling](docs/error-handling.md)
+- [Releasing](docs/releasing.md)
 
-## Project layout
+## Project Layout
 
-```
+```text
 src/
   lib.rs         shared implementation modules
-  main.rs        entry: parse → log → dispatch → exit code
+  main.rs        entry: parse -> log -> dispatch -> exit code
   cli.rs         clap argument definitions
   commands/      one file per subcommand
-  config.rs      TOML config (load/save)
+  config.rs      TOML config load/save
   paths.rs       cross-platform config/data dirs
-  logging.rs     tracing setup (logs → stderr)
+  logging.rs     tracing setup; logs go to stderr
   exit.rs        stable exit codes
 tests/cli.rs     black-box CLI tests
-xtask/           project automation (init, sync-docs)
-docs/            how to add tokio / SQLite / ratatui; releasing
-.github/         ci.yml (checks) + release.yml (generated by dist)
+xtask/           project automation: init, sync-docs
+docs/            optional capability and release guides
+tap/             notes for publishing a Homebrew tap
 ```
+
+## Template Maintenance
+
+`AGENTS.md` is the source of truth for contributor and agent instructions.
+`CLAUDE.md`, `.cursorrules`, and `.github/copilot-instructions.md` are generated
+mirrors. Edit `AGENTS.md`, then run:
+
+```sh
+cargo xtask sync-docs
+```
+
+Do not hand-edit generated mirrors or `.github/workflows/release.yml`.
 
 ## License
 

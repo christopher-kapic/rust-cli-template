@@ -27,6 +27,13 @@ https://github.com/OWNER/homebrew-tap
 `dist-workspace.toml` (`cargo xtask init` rewrites it for you). That's the only
 setup the manual flow needs — no tokens.
 
+**Install and authenticate GitHub CLI.** The manual publish flow uses `gh` to
+download the formula from the release:
+
+```sh
+gh auth login
+```
+
 ## Publishing a release (manual, default)
 
 1. Cut a release as in `docs/releasing.md`. When it's green, the GitHub Release
@@ -64,9 +71,11 @@ To have CI push the formula on every release instead of doing it by hand:
    publish-jobs = ["homebrew"]
    ```
 
-   Then regenerate the workflow (never hand-edit `release.yml`):
+   Then regenerate the workflow with `cargo-dist` (never hand-edit
+   `release.yml`):
 
    ```sh
+   cargo install cargo-dist # if `dist` is not already installed
    dist generate
    ```
 
@@ -86,6 +95,7 @@ brew upgrade mycli                # later
 
 - The tap repo only ever contains generated formula files — you don't edit them
   by hand.
-- If you rename the tap, update `dist-workspace.toml` and run `dist generate`.
+- If you rename the tap, update `dist-workspace.toml` and run `dist generate`
+  with `cargo-dist`.
 - Private repos don't work with `brew install` without auth — keep both this
   repo and the tap public for the smooth one-liner experience.

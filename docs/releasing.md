@@ -28,9 +28,10 @@ You copy that formula into your tap repo to publish it — see `tap/README.md`.
 # 1. Bump the version in Cargo.toml (e.g. 0.1.0 -> 0.1.1).
 # 2. Commit it.
 git commit -am "release: v0.1.1"
-# 3. Tag and push. The tag triggers release.yml.
+# 3. Tag and push this release tag. The tag triggers release.yml.
 git tag v0.1.1
-git push && git push --tags
+git push origin main
+git push origin v0.1.1
 ```
 
 `release.yml` (generated — do not hand-edit) does the rest. Watch it in the
@@ -40,11 +41,19 @@ repo's Actions tab; when it's green, the GitHub Release has all the artifacts.
 
 1. **Repo must be public** for `curl | sh` and `brew install` to work without
    auth tokens.
-2. **Homebrew tap:** create the tap repo — see `tap/README.md`. No token is
+2. **GitHub CLI:** install `gh` and run `gh auth login`; the default Homebrew
+   publishing flow uses it to download the generated formula.
+3. **Homebrew tap:** create the tap repo — see `tap/README.md`. No token is
    needed for the default manual publish flow; one is only required if you opt
    into automatic publishing.
-3. **Verify the workflow** before your first real release with a dry run on a
-   branch: `dist plan`.
+4. **Optional local cargo-dist:** CI installs `cargo-dist` for releases, so
+   normal release cutting does not require it locally. Install it only when you
+   want to validate or regenerate release config from your machine:
+
+   ```sh
+   cargo install cargo-dist
+   dist plan
+   ```
 
 ### Publishing the Homebrew formula
 
@@ -56,9 +65,11 @@ plainly yours. The steps (and how to automate it instead) are in
 ## Changing release behavior
 
 Never edit `.github/workflows/release.yml` by hand — it's regenerated and your
-edits will be lost. Instead edit `dist-workspace.toml`, then:
+edits will be lost. Instead edit `dist-workspace.toml`, install `cargo-dist` if
+needed, then:
 
 ```sh
+cargo install cargo-dist # if `dist` is not already installed
 dist init      # interactive; or
 dist generate  # re-emit release.yml from the config
 ```

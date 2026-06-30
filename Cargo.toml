@@ -27,8 +27,6 @@ categories = ["command-line-utilities"]
 # avoids leaking agent/dev scaffolding to package consumers).
 exclude = [
     ".github/",
-    ".claude/",
-    "prompts/",
     "tap/",
     "AGENTS.md",
     "CLAUDE.md",

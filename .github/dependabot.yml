@@ -1,0 +1,20 @@
+# Keep dependencies and SHA-pinned GitHub Actions current. Dependabot opens PRs
+# that CI gates — so updates are safe to review and merge.
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      # Batch low-risk updates into one PR to reduce noise.
+      cargo-minor:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        update-types: ["minor", "patch"]

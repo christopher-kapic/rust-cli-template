@@ -5,16 +5,14 @@
   </picture>
 </a>
 
-# Rust CLI Template
-
-> A production-minded Rust CLI starter with clap, config files, completions,
-> CI guardrails, release automation, and agent-ready contributor docs.
-
 [![GitHub stars](https://shieldcn.dev/github/stars/christopher-kapic/rust-cli-template.svg?variant=branded&mode=light&size=sm)](https://github.com/christopher-kapic/rust-cli-template/stargazers)
 [![GitHub forks](https://shieldcn.dev/github/forks/christopher-kapic/rust-cli-template.svg?variant=branded&mode=light&size=sm)](https://github.com/christopher-kapic/rust-cli-template/forks)
 [![Rust 1.85+](https://shieldcn.dev/badge/rust-1.85+-ef7d00.svg?variant=branded&mode=light&size=sm&logo=rust)](Cargo.toml)
 [![License](https://shieldcn.dev/badge/license-MIT_Apache-22c55e.svg?variant=branded&mode=light&size=sm)](#license)
 [![X](https://shieldcn.dev/x/follow/kapicode.svg?variant=branded&mode=light&size=sm)](https://x.com/kapicode)
+
+> A production-minded Rust CLI starter with clap, config files, completions,
+> CI guardrails, release automation, and agent-ready contributor docs.
 
 This is a template repository for building and shipping polished Rust command
 line tools. It starts green, stays small, and includes the boring release and

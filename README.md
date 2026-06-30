@@ -1,3 +1,10 @@
+<a href="https://github.com/christopher-kapic/rust-cli-template">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="https://shieldcn.dev/header/dots.svg?title=Rust+CLI+Template&subtitle=Production-minded+Rust+CLI+starter&logo=rust&logoColor=brand&size=wide&theme=orange&mode=light&align=left">
+    <img src="https://shieldcn.dev/header/dots.svg?title=Rust+CLI+Template&subtitle=Production-minded+Rust+CLI+starter&logo=rust&logoColor=brand&size=wide&theme=orange&mode=dark&align=left" alt="Rust CLI Template">
+  </picture>
+</a>
+
 # Rust CLI Template
 
 > A production-minded Rust CLI starter with clap, config files, completions,

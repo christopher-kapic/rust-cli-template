@@ -17,6 +17,8 @@ cross-compilation Just Works.
    `src/paths.rs` — delete the `#[allow(dead_code)]` on `data_dir`):
 
    ```rust
+   use anyhow::Context;
+
    pub fn db_path() -> anyhow::Result<std::path::PathBuf> {
        let dir = crate::paths::data_dir()?;
        std::fs::create_dir_all(&dir)

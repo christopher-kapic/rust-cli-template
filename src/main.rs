@@ -20,6 +20,7 @@ fn main() {
 
     let code = match run(&cli) {
         Ok(()) => ExitCode::Success,
+        Err(err) if exit::is_broken_pipe(&err) => ExitCode::Success,
         Err(err) => {
             // Identifiers in error messages are wrapped in `backticks`, never
             // 'single quotes' — see AGENTS.md.

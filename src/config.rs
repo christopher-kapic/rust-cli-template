@@ -56,6 +56,14 @@ impl Config {
 
     /// Write config only if no config file exists yet.
     pub fn save_new(&self) -> Result<bool> {
+        let path = crate::paths::config_file()?;
+        if path
+            .try_exists()
+            .with_context(|| format!("checking whether config file `{}` exists", path.display()))?
+        {
+            return Ok(false);
+        }
+
         let (path, file) = self.write_temp()?;
         match file.persist_noclobber(&path) {
             Ok(_) => {

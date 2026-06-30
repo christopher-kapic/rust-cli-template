@@ -24,7 +24,7 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
-    /// One-time: rename `mycli` to your project and fill in metadata.
+    /// One-time: rename the template crate and fill in metadata.
     Init(init::Args),
     /// Regenerate harness-specific docs (CLAUDE.md, .cursorrules,
     /// copilot-instructions.md) from the canonical AGENTS.md.

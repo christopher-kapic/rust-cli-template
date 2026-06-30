@@ -21,6 +21,12 @@ pub fn text(text: impl std::fmt::Display) -> Result<()> {
     write!(out, "{text}").context("writing to stdout")
 }
 
+/// Write raw command output to stdout.
+pub fn bytes(bytes: &[u8]) -> Result<()> {
+    let mut out = io::stdout().lock();
+    out.write_all(bytes).context("writing to stdout")
+}
+
 /// Serialize a typed value as one JSON object to stdout.
 pub fn json<T: Serialize>(value: &T) -> Result<()> {
     let mut out = io::stdout().lock();

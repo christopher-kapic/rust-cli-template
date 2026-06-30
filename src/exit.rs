@@ -13,6 +13,7 @@
 //! up. The surrounding error should describe the concrete failure.
 
 use std::fmt;
+use std::io;
 
 /// Stable exit codes. Document any code you add in the module comment above and
 /// in `README.md` so users and scripts can rely on them.
@@ -81,6 +82,15 @@ pub fn code_for(err: &anyhow::Error) -> ExitCode {
     ExitCode::Failure
 }
 
+/// Whether this error came from writing to a downstream pipe that closed early.
+pub fn is_broken_pipe(err: &anyhow::Error) -> bool {
+    err.chain().any(|cause| {
+        cause
+            .downcast_ref::<io::Error>()
+            .is_some_and(|err| err.kind() == io::ErrorKind::BrokenPipe)
+    })
+}
+
 /// Format an error for stderr, excluding exit-code-only markers.
 pub fn message_for(err: &anyhow::Error) -> String {
     err.chain()
@@ -127,5 +137,13 @@ mod tests {
             source: CodedError::new(ExitCode::NotFound),
         });
         assert_eq!(code_for(&err), ExitCode::NotFound);
+    }
+
+    #[test]
+    fn detects_broken_pipe_through_context() {
+        let err = anyhow::Error::new(io::Error::from(io::ErrorKind::BrokenPipe))
+            .context("writing to stdout");
+
+        assert!(is_broken_pipe(&err));
     }
 }

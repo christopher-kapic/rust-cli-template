@@ -1,13 +1,8 @@
 //! `cargo xtask init` — turn the template into your project.
 //!
-//! Replaces the placeholder tokens everywhere they appear in text files:
-//!
-//!   mycli                              -> your crate/binary name (lowercase)
-//!   mycli::                            -> your Rust crate path (`-` -> `_`)
-//!   MYCLI                              -> ENV-VAR prefix (UPPER, `-` -> `_`)
-//!   OWNER                              -> your GitHub owner/org
-//!   Your Name <you@example.com>        -> your author line (optional)
-//!   A fast, friendly command-line tool.-> your description (optional)
+//! Replaces the template's crate name, Rust crate path, environment-variable
+//! prefix, GitHub owner, author, and description everywhere they appear in text
+//! files.
 //!
 //! Run once, right after forking. It edits files in place — review the diff and
 //! commit. Then run `cargo xtask sync-docs` so the agent mirrors pick up your
@@ -67,12 +62,17 @@ const DESCRIPTION_PLACEHOLDER: &str = "A fast, friendly command-line tool.";
 
 pub fn run(args: Args) -> Result<()> {
     validate_name(&args.name)?;
+    validate_owner(&args.owner)?;
 
     let lower = args.name.clone();
     let rust_crate = args.name.replace('-', "_");
     let upper = args.name.to_uppercase().replace('-', "_");
 
     let mut replacements: Vec<(String, String)> = vec![
+        (
+            "christopher-kapic/rust-cli-template".to_string(),
+            format!("{}/{}", args.owner, lower),
+        ),
         ("mycli::".to_string(), format!("{rust_crate}::")),
         ("MYCLI".to_string(), upper),
         ("mycli".to_string(), lower.clone()),
@@ -163,6 +163,26 @@ fn validate_name(name: &str) -> Result<()> {
     if !ok {
         bail!(
             "invalid name `{name}`: use lowercase letters/digits/`-`/`_`, starting with a letter"
+        );
+    }
+    Ok(())
+}
+
+fn validate_owner(owner: &str) -> Result<()> {
+    let ok = (1..=39).contains(&owner.len())
+        && owner.chars().all(|c| c.is_ascii_alphanumeric() || c == '-')
+        && owner
+            .chars()
+            .next()
+            .is_some_and(|c| c.is_ascii_alphanumeric())
+        && owner
+            .chars()
+            .last()
+            .is_some_and(|c| c.is_ascii_alphanumeric())
+        && !owner.contains("--");
+    if !ok {
+        bail!(
+            "invalid owner `{owner}`: use a GitHub owner/org name of 1-39 letters, digits, or single hyphens, starting and ending with a letter or digit"
         );
     }
     Ok(())
@@ -311,5 +331,23 @@ mod tests {
         let updated = add_typos_allowlist_word(text, "my-test-tool");
 
         assert_eq!(updated.matches("my-test-tool").count(), 2);
+    }
+
+    #[test]
+    fn validates_github_owner_names() {
+        assert!(validate_owner("acme").is_ok());
+        assert!(validate_owner("acme-tools").is_ok());
+        assert!(validate_owner("a1").is_ok());
+    }
+
+    #[test]
+    fn rejects_invalid_github_owner_names() {
+        assert!(validate_owner("").is_err());
+        assert!(validate_owner("-acme").is_err());
+        assert!(validate_owner("acme-").is_err());
+        assert!(validate_owner("acme/tools").is_err());
+        assert!(validate_owner("acme tools").is_err());
+        assert!(validate_owner("acme--tools").is_err());
+        assert!(validate_owner("abcdefghijklmnopqrstuvwxyzabcdefghijklmn").is_err());
     }
 }

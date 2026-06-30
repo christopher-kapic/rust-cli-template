@@ -26,7 +26,7 @@ Create a new repository from this template, clone it, then initialize the
 placeholder project metadata:
 
 ```sh
-cd rust-cli-template
+cd your-new-repo
 
 # Preview the rewrite without touching files.
 cargo xtask init --name zap --owner your-github-username --dry-run

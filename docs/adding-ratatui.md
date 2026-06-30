@@ -22,8 +22,9 @@ many great CLIs never need one.
    ```
 
 3. Standard ratatui loop: enter raw mode + alternate screen, draw on each tick,
-   handle key events, restore the terminal on exit (always restore, even on
-   error — use a guard so a panic doesn't leave the terminal broken).
+   handle key events, restore the terminal on normal return/error paths. Use a
+   guard for cleanup, and avoid panics entirely — release builds use
+   `panic = "abort"`, so destructors will not run after a panic.
 
 ## Design rules
 
@@ -35,8 +36,8 @@ many great CLIs never need one.
   `handle_key(KeyEvent) -> Action`; render is a pure function of state. This is
   what makes a TUI testable.
 - **Esc always backs out**; `Ctrl-C` always hard-cancels.
-- **Restore the terminal on every exit path.** A `Drop` guard that leaves raw
-  mode + alternate screen is the safest pattern.
+- **Restore the terminal on every normal exit path.** A `Drop` guard that leaves
+  raw mode + alternate screen is the safest pattern for returns and errors.
 
 ## Testing
 
